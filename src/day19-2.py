@@ -32,9 +32,6 @@ class Rule(NamedTuple):
         return Rule(rule_id, baserule, ruleset, character)
 
 
-level = 0
-
-
 class Ruleset:
     rules = Dict[int, Rule]
     level: int
@@ -100,47 +97,25 @@ class Ruleset:
                 return False, s
 
     def is_0_valid_repeating(self, s: str) -> bool:
-        breakpoint()
-        v, sub = self.is_valid(42, s)
-        if not v:
-            return False
+        v = True
+        counter = 0
+        sub = s
         while v:
-            v, sub = self.is_valid(31, sub)
-            if sub == "":
-                return True
+            print(sub)
+            v, sub = self.is_valid(42, sub)
+            counter += 1
+            print(counter, sub)
+            sub31 = sub
+            if counter >= 2:
+                for i in range(counter - 1):
+                    v31, sub31 = self.is_valid(31, sub31)
+                    print(i, sub31)
+                    if v31 and sub31 == "":
+                        return True
         return False
 
 
-### Unit test
-RAW = """0: 4 1 5
-1: 2 3 | 3 2
-2: 4 4 | 5 5
-3: 4 5 | 5 4
-4: "a"
-5: "b"
-"""
-
-strings = """ababbb
-bababa
-abbbab
-aaabbb
-aaaabbb"""
-
-rules_str = RAW.split("\n\n")[0]
-print(rules_str)
-RULES = Ruleset(rules_str)
-
-STRINGS = strings.split("\n")
-
-VALID_STRINGS = []
-for string in STRINGS:
-    v, subs = RULES.is_valid(0, string)
-    if v:
-        print(v, subs)
-    if v and len(subs) == 0:
-        VALID_STRINGS.append(string)
-print(len(VALID_STRINGS))
-
+# UNIT TESTS
 
 RAW2 = """42: 9 14 | 10 1
 9: 14 27 | 1 26
@@ -190,6 +165,19 @@ aaaabbaabbaaaaaaabbbabbbaaabbaabaaa
 babaaabbbaaabaababbaabababaaab
 aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba"""
 
+STRINGS2 = """bbabbbbaabaabba
+babbbbaabbbbbabbbbbbaabaaabaaa
+aaabbbbbbaaaabaababaabababbabaaabbababababaaa
+bbbbbbbaaaabbbbaaabbabaaa
+bbbababbbbaaaaaaaabbababaaababaabab
+ababaaaaaabaaab
+ababaaaaabbbaba
+baabbaaaabbaaaababbaababb
+abbbbabbbbaaaababbbbbbaaaababb
+aaaaabbaabaaaaababaa
+aaaabbaabbaaaaaaabbbabbbaaabbaabaaa
+aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba"""
+
 RULES2 = Ruleset(RAW2)
 STRINGS2 = STRINGS2.split("\n")
 
@@ -205,30 +193,20 @@ valid_rep_strings = []
 for string in STRINGS2:
     if RULES2.is_0_valid_repeating(string):
         valid_rep_strings.append(string)
-print(valid_rep_strings)
-print(len(valid_rep_strings))
+
+##
+# Problem
 
 
-## Problem
-
-# with open("../inputs/day19.txt") as f:
-#     raw = f.read()
-# rules, strings = raw.split("\n\n")
-# the_rules = Ruleset(rules)
-# strings = strings.split("\n")
+with open("../inputs/day19.txt") as f:
+    raw = f.read()
+rules, strings = raw.split("\n\n")
+the_rules = Ruleset(rules)
+strings = strings.split("\n")
 
 
-# valid_strings = []
-# for string in strings:
-#     v, subs = the_rules.is_valid(0, string)
-#     if v and len(subs) == 0:
-#         valid_strings.append(string)
-# print(len(valid_strings))
-
-
-# valid_rep_strings = []
-# for string in strings:
-#     if the_rules.is_0_valid_repeating(string):
-#         valid_rep_strings.append(string)
-
-# print(len(valid_rep_strings))
+valid_strings = []
+for string in strings:
+    if the_rules.is_0_valid_repeating(string):
+        valid_strings.append(string)
+print(len(valid_strings))
